@@ -2,20 +2,19 @@ import { useQuery } from "@tanstack/react-query";
 
 function useFetchTask({ page = 1, limit = 10, status = "" }) {
   const token = localStorage.getItem("token-task");
-  const userId = localStorage.getItem("userId"); // Obtener el userId
+  const userId = localStorage.getItem("userId");
   const apiUrl = new URL(`${import.meta.env.VITE_BACKEND_ENDPOINT}api/task`);
 
-  // Agregar parámetros de consulta a la URL
   apiUrl.searchParams.append("page", page);
   apiUrl.searchParams.append("limit", limit);
-  apiUrl.searchParams.append("userId", userId); // Agregar el userId a la URL
+  apiUrl.searchParams.append("userId", userId);
 
   if (status && status !== "All") {
     apiUrl.searchParams.append("status", status);
   }
 
   const { data, error, isLoading, isFetched, refetch } = useQuery({
-    queryKey: ["tasks", page, limit, status, userId], // Asegúrate de incluir el userId en la clave de la consulta
+    queryKey: ["tasks", page, limit, status, userId], 
     queryFn: async () => {
       const response = await fetch(apiUrl, {
         method: "GET",
@@ -31,7 +30,7 @@ function useFetchTask({ page = 1, limit = 10, status = "" }) {
 
       return response.json();
     },
-    keepPreviousData: true, // Mantiene los datos anteriores al cambiar de página
+    keepPreviousData: true,
   });
 
   return {

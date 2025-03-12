@@ -14,7 +14,6 @@ export const AuthProvider = ({ children }) => {
         try {
             const data = await mutateAsync(formData);
             if (data) {
-                console.log(data)
                 setIsAuthenticated(true);
                 return true;
             }

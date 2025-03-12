@@ -27,8 +27,8 @@ import empty from '../../assets/empty-box.svg';
 
 function Tasks() {
   const [statusFilter, setStatusFilter] = useState("All");
-  const [page, setPage] = useState(1); // Estado para la página actual
-  const [resultsPerPage, setResultsPerPage] = useState(10); // Estado para resultados por página
+  const [page, setPage] = useState(1);
+  const [resultsPerPage, setResultsPerPage] = useState(10); 
   const { tasks, error: fetchError, loading: loadingTasks, fetchTask, totalPages } = useFetchTask({
     status: statusFilter,
     page,
@@ -42,7 +42,7 @@ function Tasks() {
 
   const handleStatusChange = async (event) => {
     setStatusFilter(event.target.value);
-    setPage(1); // Resetear la página al cambiar el filtro
+    setPage(1);
   };
 
   const handleStatusUpdate = async (task, newStatus) => {
@@ -50,7 +50,7 @@ function Tasks() {
 
     try {
       await editTask({ id: task._id, formData: { status: newStatus } });
-      fetchTask(); // Recargar las tareas después de la actualización
+      fetchTask();
     } catch (error) {
       console.error("Error updating task status:", error);
     }
@@ -58,7 +58,7 @@ function Tasks() {
 
   const handleDelete = async (id) => {
     await deleteTask(id);
-    fetchTask(); // Recargar la lista después de eliminar
+    fetchTask();
   };
 
   const handleEdit = (task) => {
@@ -72,18 +72,18 @@ function Tasks() {
   };
 
   const updateTaskList = () => {
-    fetchTask(); // Recargar la lista después de crear o editar
+    fetchTask();
     setShowForm(false);
     setEditingTask(null);
   };
 
   const handlePageChange = (event, value) => {
-    setPage(value); // Cambiar la página
+    setPage(value);
   };
 
   const handleResultsPerPageChange = (event) => {
-    setResultsPerPage(event.target.value); // Cambiar los resultados por página
-    setPage(1); // Resetear a la primera página
+    setResultsPerPage(event.target.value);
+    setPage(1);
   };
 
   return (
