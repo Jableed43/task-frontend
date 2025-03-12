@@ -19,6 +19,8 @@ This is the frontend of a task management system developed with React, MUI, and 
 - **React Query**: For managing communication with the API and state of the data
 - **React Router**: For navigating between pages
 - **Vite**: Fast build tool for React
+- **jwt-decode**: To logout when token session is expired
+- **sweetalert2**: Good looking notifications
 
 ## Installation
 
