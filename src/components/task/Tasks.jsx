@@ -6,9 +6,6 @@ import CreateTask from "./CreateTask";
 import {
   Box,
   Button,
-  Card,
-  CardContent,
-  CardActions,
   Typography,
   CircularProgress,
   Grid2,
@@ -24,11 +21,13 @@ import GoBackButton from "../layout/GoBackButton";
 import useAuth from "../../hooks/useAuth";
 import useEditTask from "../../hooks/task/useEditTask";
 import empty from '../../assets/empty-box.svg';
+import Swal from "sweetalert2";
+import TaskCard from "./TaskCard";
 
 function Tasks() {
   const [statusFilter, setStatusFilter] = useState("All");
   const [page, setPage] = useState(1);
-  const [resultsPerPage, setResultsPerPage] = useState(10); 
+  const [resultsPerPage, setResultsPerPage] = useState(10);
   const { tasks, error: fetchError, loading: loadingTasks, fetchTask, totalPages } = useFetchTask({
     status: statusFilter,
     page,
@@ -57,9 +56,26 @@ function Tasks() {
   };
 
   const handleDelete = async (id) => {
-    await deleteTask(id);
-    fetchTask();
+    try {
+      await deleteTask(id);
+      fetchTask();
+
+      Swal.fire({
+        icon: "success",
+        title: "Task Deleted",
+        text: "The task has been deleted successfully.",
+      });
+    } catch (err) {
+      console.error("Error deleting task:", err);
+
+      Swal.fire({
+        icon: "error",
+        title: "Delete Failed",
+        text: "There was an issue deleting the task. Please try again.",
+      });
+    }
   };
+
 
   const handleEdit = (task) => {
     setEditingTask(task);
@@ -102,7 +118,7 @@ function Tasks() {
           Task List
         </Typography>
 
-        { tasks.length !== 0 && (<Box sx={{
+        {tasks.length !== 0 && (<Box sx={{
           display: "flex",
           justifyContent: "center",
           alignItems: "flex-end",
@@ -125,7 +141,7 @@ function Tasks() {
           <FormControl variant="standard" sx={{ mb: 3 }}>
             <InputLabel id="results-label" >Results</InputLabel>
             <Select
-            labelId="results-label"
+              labelId="results-label"
               value={resultsPerPage}
               onChange={handleResultsPerPageChange}
               size="small"
@@ -141,87 +157,60 @@ function Tasks() {
 
         </Box>)}
 
-
-
         {showForm && <CreateTask taskToEdit={editingTask} updateTaskList={updateTaskList} />}
 
-        <Grid2 container spacing={3} justifyContent="center">
-          {loadingTasks && (
-            <Box sx={{ width: "100%", display: "flex", justifyContent: "center", mt: 3 }}>
-              <CircularProgress />
-            </Box>
-          )}
-
-          {fetchError && (
-            <Grid2 item xs={12}>
-              <Alert severity="error">Error: {fetchError}</Alert>
-            </Grid2>
-          )}
-
-          {!loadingTasks &&
-            tasks.map((task) => (
-              <Grid2 item xs={12} sm={6} md={4} key={task._id}>
-                <Card sx={{ height: "100%" }}>
-                  <CardContent>
-                    <Typography variant="h6" gutterBottom>
-                      {task.title}
-                    </Typography>
-                    <Typography variant="body2">
-                      <strong>Description:</strong> {task.description}
-                    </Typography>
-                    <FormControl variant="standard">
-                      <Select value={task.status} onChange={(e) => handleStatusUpdate(task, e.target.value)}>
-                        <MenuItem value="pending">Pending</MenuItem>
-                        <MenuItem value="in-progress">In Progress</MenuItem>
-                        <MenuItem value="completed">Completed</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </CardContent>
-
-                  <CardActions sx={{ justifyContent: "center" }}>
-                    <Button size="small" onClick={() => handleEdit(task)}>
-                      Edit
-                    </Button>
-                    <Button
-                      size="small"
-                      color="error"
-                      onClick={() => handleDelete(task._id)}
-                      disabled={loadingDelete}
-                    >
-                      {loadingDelete ? "Deleting..." : "Delete"}
-                    </Button>
-                  </CardActions>
-                </Card>
+        {loadingTasks ? (
+          <Box sx={{ width: "100%", display: "flex", justifyContent: "center", mt: 3 }}>
+            <CircularProgress />
+          </Box>
+        ) : (
+          <Grid2 container spacing={3} justifyContent="center">
+            {fetchError && (
+              <Grid2 item xs={12}>
+                <Alert severity="error">Error: {fetchError}</Alert>
               </Grid2>
-            ))}
+            )}
 
-          {!loadingTasks && tasks.length === 0 && !fetchError && (
-            <Grid2 alignSelf="center" item xs={12}>
-              <Typography variant="h5" align="center">
-                No tasks available for your account.
-              </Typography>
-              <img 
-                      src={empty} 
-                      alt="empty" 
-                      style={{ 
-                        width: '50%', 
-                        maxWidth: '400px', 
-                        margin: '20px', 
-                        borderRadius: '8px', 
-                        boxShadow: '0 4px 10px rgba(0, 0, 0, 0.2)' 
-                      }} 
-                    />
-            </Grid2>
-          )}
+            {!loadingTasks &&
+              tasks.map((task) => (
+                <TaskCard
+                  key={task._id}
+                  task={task}
+                  handleStatusUpdate={handleStatusUpdate}
+                  handleEdit={handleEdit}
+                  handleDelete={handleDelete}
+                  loadingDelete={loadingDelete}
+                />
+              ))}
 
-          {deleteError && (
-            <Grid2 item xs={12}>
-              <Alert severity="error">Error deleting: {deleteError}</Alert>
-            </Grid2>
-          )}
-        </Grid2>
+            {!loadingTasks && tasks.length === 0 && !fetchError && (
+              <Grid2 alignSelf="center" item xs={12}>
+                <Typography variant="h5" align="center">
+                  No tasks available for your account.
+                </Typography>
+                <img
+                  src={empty}
+                  alt="empty"
+                  style={{
+                    width: '50%',
+                    maxWidth: '400px',
+                    margin: '20px',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.2)'
+                  }}
+                />
+              </Grid2>
+            )}
+          </Grid2>
+        )}
 
-        { !loadingTasks && tasks.length !== 0  && (
+        {deleteError && (
+          <Grid2 item xs={12}>
+            <Alert severity="error">Error deleting: {deleteError}</Alert>
+          </Grid2>
+        )}
+
+        {!loadingTasks && tasks.length !== 0 && (
           <Box sx={{ display: "flex", justifyContent: "center", m: 2 }}>
             <Pagination
               count={totalPages}

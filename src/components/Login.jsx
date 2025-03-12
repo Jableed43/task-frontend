@@ -6,7 +6,7 @@ import useAuth from '../hooks/useAuth';
 
 function Login() {
   const navigate = useNavigate();
-  const { login, error, isLoading } = useAuth();
+  const { login, isLoading } = useAuth();
 
   const [form, setForm] = useState({
     email: '',
@@ -128,11 +128,6 @@ function Login() {
           >
             {isLoading ? <CircularProgress size={24} color="inherit" /> : 'Login'}
           </Button>
-          {error && (
-            <Typography variant="body2" color="error" textAlign="center">
-              Error: {error instanceof Error ? error.message : error}
-            </Typography>
-          )}
         </Box>
       </Box>
     </Layout>

@@ -1,9 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
+import Swal from "sweetalert2";
+import useAuth from "../useAuth";
 
 function useFetchTask({ page = 1, limit = 10, status = "" }) {
   const token = localStorage.getItem("token-task");
   const userId = localStorage.getItem("userId");
   const apiUrl = new URL(`${import.meta.env.VITE_BACKEND_ENDPOINT}api/task`);
+  const { logout } = useAuth();
+
 
   apiUrl.searchParams.append("page", page);
   apiUrl.searchParams.append("limit", limit);
@@ -23,6 +27,16 @@ function useFetchTask({ page = 1, limit = 10, status = "" }) {
           Authorization: `Bearer ${token}`,
         },
       });
+
+      if (response.status === 401) {
+        logout();
+        Swal.fire({
+          icon: "error",
+          title: "Session Expired",
+          text: "Your session has expired. You have been logged out.",
+        });
+        throw new Error("Session expired");
+      }
 
       if (!response.ok) {
         throw new Error("Failed to fetch tasks");

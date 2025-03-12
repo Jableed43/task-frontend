@@ -8,12 +8,12 @@ import {
   TextField,
   Grid2,
   Typography,
-  Alert,
 } from "@mui/material";
+import Swal from "sweetalert2";
 
-function TaskManager({ taskToEdit, updateTaskList, clearTaskToEdit }) {
-  const { mutateAsync: createTask, isLoading, error: createError } = useCreateTask();
-  const { mutateAsync: editTask, error: editError } = useEditTask();
+function CreateTask({ taskToEdit, updateTaskList }) {
+  const { mutateAsync: createTask, isLoading } = useCreateTask();
+  const { mutateAsync: editTask } = useEditTask();
 
   const [form, setForm] = useState({
     title: "",
@@ -35,22 +35,45 @@ function TaskManager({ taskToEdit, updateTaskList, clearTaskToEdit }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+  
       if (taskToEdit) {
+        
         const updatedTask = await editTask({ id: taskToEdit._id, formData: form });
+  
         updateTaskList((prevTasks) =>
           prevTasks.map((task) => (task._id === taskToEdit._id ? updatedTask : task))
         );
-        clearTaskToEdit();
+         
+        Swal.fire({
+          icon: "success",
+          title: "Task Updated",
+          text: "Your task has been updated successfully.",
+        });
+  
       } else {
+  
         const newTask = await createTask(form);
+        
         updateTaskList((prevTasks) => [...prevTasks, newTask]);
         setForm({ title: "", description: "", status: "pending" });
+  
+        Swal.fire({
+          icon: "success",
+          title: "Task Created",
+          text: "Your task has been created successfully.",
+        });
       }
     } catch (err) {
       console.error("Task operation error:", err);
+  
+      Swal.fire({
+        icon: "error",
+        title: "Operation Failed",
+        text: "Something went wrong, please try again.",
+      });
     }
   };
-
+  
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setForm((prevForm) => ({ ...prevForm, [name]: value }));
@@ -78,7 +101,6 @@ function TaskManager({ taskToEdit, updateTaskList, clearTaskToEdit }) {
                 onChange={handleInputChange}
               />
             </Grid2>
-            {(createError || editError) && <Alert severity="error">{createError?.message || editError?.message}</Alert>}
             <Grid2 item xs={12}>
               <Button sx={{ textTransform: "capitalize"  }}  variant="contained" color="primary" type="submit" fullWidth disabled={isLoading}>
                 {isLoading ? "Saving..." : taskToEdit ? "Edit Task" : "Create Task"}
@@ -90,10 +112,9 @@ function TaskManager({ taskToEdit, updateTaskList, clearTaskToEdit }) {
   );
 }
 
-TaskManager.propTypes = {
+CreateTask.propTypes = {
   taskToEdit: PropTypes.object,
   updateTaskList: PropTypes.func.isRequired,
-  clearTaskToEdit: PropTypes.func.isRequired,
 };
 
-export default TaskManager;
+export default CreateTask;

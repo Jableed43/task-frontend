@@ -13,7 +13,7 @@ function Register() {
   });
 
   const navigate = useNavigate();
-  const { registerUser, error, isLoading } = useRegisterUser();
+  const { registerUser, isLoading } = useRegisterUser();
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -93,7 +93,7 @@ function Register() {
             onChange={(e) =>
               setForm({ ...form, password: e.target.value })
             }
-            InputProps={{
+            Input={{
               endAdornment: (
                 <Button
                   onClick={togglePasswordVisibility}
@@ -124,11 +124,6 @@ function Register() {
           >
             {isLoading ? <CircularProgress size={24} color="inherit" /> : 'Register'}
           </Button>
-          {error && (
-            <Typography variant="body2" color="error" textAlign="center">
-              Error: {error}
-            </Typography>
-          )}
         </Box>
       </Box>
     </Layout>
