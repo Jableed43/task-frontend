@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import AuthContext from './AuthContext';
 import useLoginUser from '../../hooks/user/useLoginUser';
 import PropTypes from 'prop-types';
-import Swal from 'sweetalert2';
 import {jwtDecode} from 'jwt-decode';
+import Toast from '../layout/Toast';
 
 export const AuthProvider = ({ children }) => {
   const { mutateAsync, error, isLoading } = useLoginUser();
@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }) => {
       const data = await mutateAsync(formData);
       if (data) {
         setIsAuthenticated(true);
-        Swal.fire({
+        Toast.fire({
           icon: "success",
           title: "Login Successful",
           text: "You have logged in successfully.",
@@ -37,7 +37,7 @@ export const AuthProvider = ({ children }) => {
       return false;
     } catch (err) {
       console.error("Auth error", err);
-      Swal.fire({
+      Toast.fire({
         icon: "error",
         title: "Login Failed",
         text: "Invalid credentials. Please try again.",
@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('userId');
     setIsAuthenticated(false);
 
-    Swal.fire({
+    Toast.fire({
       icon: 'success',
       title: 'Logged out',
       text: 'You have successfully logged out.',
@@ -69,7 +69,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('token-task');
         localStorage.removeItem('userId');
         setIsAuthenticated(false);
-        Swal.fire({
+        Toast.fire({
           icon: 'error',
           title: 'Session Expired',
           text: 'Your session has expired. Please log in again.',

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Box, TextField, Button, Typography, CircularProgress } from '@mui/material';
 import Layout from './layout/Layout';
 import useRegisterUser from '../hooks/user/useRegisterUser';
+import Toast from './layout/Toast';
 
 function Register() {
   const [showPassword, setShowPassword] = useState(false);
@@ -22,6 +23,11 @@ function Register() {
       if (response) {
         navigate('/login');
       }
+      Toast.fire({
+        icon: "success",
+        title: "Created Account",
+        text: "You can now log in.",
+      });
     } catch (err) {
       console.error('Registration failed:', err.message);
     }

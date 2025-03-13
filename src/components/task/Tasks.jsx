@@ -17,9 +17,9 @@ import GoBackButton from "../layout/GoBackButton";
 import useAuth from "../../hooks/useAuth";
 import useEditTask from "../../hooks/task/useEditTask";
 import empty from '../../assets/empty-box.svg';
-import Swal from "sweetalert2";
 import TaskCard from "./TaskCard";
 import GenericFilter from "./GenericFilter";
+import Toast from "../layout/Toast";
 
 const statusOptions = [
   { value: "All", label: "All" },
@@ -58,10 +58,13 @@ function Tasks() {
 
   const handleStatusUpdate = async (task, newStatus) => {
     if (task.status === newStatus) return;
-
     try {
       await editTask({ id: task._id, formData: { status: newStatus } });
       fetchTask();
+      Toast.fire({
+        icon: "success",
+        title: `Status changed to ${newStatus}`,
+      });
     } catch (error) {
       console.error("Error updating task status:", error);
     }
@@ -72,7 +75,7 @@ function Tasks() {
       await deleteTask(id);
       fetchTask();
 
-      Swal.fire({
+      Toast.fire({
         icon: "success",
         title: "Task Deleted",
         text: "The task has been deleted successfully.",
@@ -80,7 +83,7 @@ function Tasks() {
     } catch (err) {
       console.error("Error deleting task:", err);
 
-      Swal.fire({
+      Toast.fire({
         icon: "error",
         title: "Delete Failed",
         text: "There was an issue deleting the task. Please try again.",

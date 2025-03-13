@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import Swal from "sweetalert2";
 import useAuth from "../useAuth";
+import Toast from "../../components/layout/Toast";
 
 function useFetchTask({ page = 1, limit = 10, status = "" }) {
   const token = localStorage.getItem("token-task");
@@ -30,7 +30,7 @@ function useFetchTask({ page = 1, limit = 10, status = "" }) {
 
       if (response.status === 401) {
         logout();
-        Swal.fire({
+        Toast.fire({
           icon: "error",
           title: "Session Expired",
           text: "Your session has expired. You have been logged out.",

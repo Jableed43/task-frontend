@@ -9,7 +9,7 @@ import {
   Grid2,
   Typography,
 } from "@mui/material";
-import Swal from "sweetalert2";
+import Toast from "../layout/Toast";
 
 function CreateTask({ taskToEdit, updateTaskList }) {
   const { mutateAsync: createTask, isLoading } = useCreateTask();
@@ -44,7 +44,7 @@ function CreateTask({ taskToEdit, updateTaskList }) {
           prevTasks.map((task) => (task._id === taskToEdit._id ? updatedTask : task))
         );
          
-        Swal.fire({
+        Toast.fire({
           icon: "success",
           title: "Task Updated",
           text: "Your task has been updated successfully.",
@@ -57,7 +57,7 @@ function CreateTask({ taskToEdit, updateTaskList }) {
         updateTaskList((prevTasks) => [...prevTasks, newTask]);
         setForm({ title: "", description: "", status: "pending" });
   
-        Swal.fire({
+        Toast.fire({
           icon: "success",
           title: "Task Created",
           text: "Your task has been created successfully.",
@@ -66,7 +66,7 @@ function CreateTask({ taskToEdit, updateTaskList }) {
     } catch (err) {
       console.error("Task operation error:", err);
   
-      Swal.fire({
+      Toast.fire({
         icon: "error",
         title: "Operation Failed",
         text: "Something went wrong, please try again.",
