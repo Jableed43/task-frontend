@@ -10,11 +10,7 @@ import {
   CircularProgress,
   Grid2,
   Alert,
-  Select,
-  MenuItem,
-  FormControl,
   Pagination,
-  InputLabel,
 } from "@mui/material";
 import Layout from "../layout/Layout";
 import GoBackButton from "../layout/GoBackButton";
@@ -23,6 +19,22 @@ import useEditTask from "../../hooks/task/useEditTask";
 import empty from '../../assets/empty-box.svg';
 import Swal from "sweetalert2";
 import TaskCard from "./TaskCard";
+import GenericFilter from "./GenericFilter";
+
+const statusOptions = [
+  { value: "All", label: "All" },
+  { value: "pending", label: "Pending" },
+  { value: "in-progress", label: "In Progress" },
+  { value: "completed", label: "Completed" }
+];
+
+const resultsOptions = [
+  { value: 10, label: "10" },
+  { value: 20, label: "20" },
+  { value: 30, label: "30" },
+  { value: 40, label: "40" },
+  { value: 50, label: "50" }
+];
 
 function Tasks() {
   const [statusFilter, setStatusFilter] = useState("All");
@@ -118,43 +130,21 @@ function Tasks() {
           Task List
         </Typography>
 
-        {tasks.length !== 0 && (<Box sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "flex-end",
-          gap: "10px"
-        }} >
-          <FormControl variant="standard" sx={{ mb: 3 }}>
-            <InputLabel id="status-label">Status</InputLabel>
-            <Select
-              labelId="status-label"
-              value={statusFilter}
-              onChange={handleStatusChange}
-            >
-              <MenuItem value="All">All</MenuItem>
-              <MenuItem value="pending">Pending</MenuItem>
-              <MenuItem value="in-progress">In Progress</MenuItem>
-              <MenuItem value="completed">Completed</MenuItem>
-            </Select>
-          </FormControl>
+        {tasks.length !== 0 && (<Box sx={{ display: "flex", justifyContent: "center", alignItems: "flex-end", gap: "10px" }}>
+          <GenericFilter
+            label="Status"
+            value={statusFilter}
+            onChange={handleStatusChange}
+            options={statusOptions}
+          />
 
-          <FormControl variant="standard" sx={{ mb: 3 }}>
-            <InputLabel id="results-label" >Results</InputLabel>
-            <Select
-              labelId="results-label"
-              value={resultsPerPage}
-              onChange={handleResultsPerPageChange}
-              size="small"
-              sx={{ width: 100 }}
-            >
-              <MenuItem value={10}>10</MenuItem>
-              <MenuItem value={20}>20</MenuItem>
-              <MenuItem value={30}>30</MenuItem>
-              <MenuItem value={40}>40</MenuItem>
-              <MenuItem value={50}>50</MenuItem>
-            </Select>
-          </FormControl>
-
+          <GenericFilter
+            label="Results"
+            value={resultsPerPage}
+            onChange={handleResultsPerPageChange}
+            options={resultsOptions}
+            width={100}
+          />
         </Box>)}
 
         {showForm && <CreateTask taskToEdit={editingTask} updateTaskList={updateTaskList} />}
@@ -185,8 +175,14 @@ function Tasks() {
 
             {!loadingTasks && tasks.length === 0 && !fetchError && (
               <Grid2 alignSelf="center" item xs={12}>
+                <GenericFilter
+                  label="Status"
+                  value={statusFilter}
+                  onChange={handleStatusChange}
+                  options={statusOptions}
+                />
                 <Typography variant="h5" align="center">
-                  No tasks available for your account.
+                 { statusFilter !== "All" ? "No tasks available for your account, try another status." : "No tasks available for your account."}
                 </Typography>
                 <img
                   src={empty}
