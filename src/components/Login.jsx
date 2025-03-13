@@ -96,7 +96,7 @@ function Login() {
             fullWidth
             value={form.password}
             onChange={(e) => setForm({ ...form, password: e.target.value })}
-            InputProps={{
+            Input={{
               endAdornment: (
                 <Button
                   onClick={togglePasswordVisibility}
